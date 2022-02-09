@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx_observablelist/principal_controller.dart';
 
 class Principal extends StatefulWidget {
   @override
@@ -7,35 +8,39 @@ class Principal extends StatefulWidget {
 }
 
 class _PrincipalState extends State<Principal> {
+  PrincipalController _principalController = PrincipalController();
 
-  _dialog(){
+  _dialog() {
     showDialog(
         context: context,
-        builder: (_){
+        builder: (_) {
           return AlertDialog(
             title: Text("Adicionar item"),
             content: TextField(
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Digite uma descrição..."
-              ),
-              onChanged: (valor){},
+                  border: OutlineInputBorder(),
+                  labelText: "Digite uma descrição..."),
+              onChanged: _principalController.setNovoItem,
             ),
             actions: [
               TextButton(
-                  onPressed: (){ Navigator.pop(context); },
-                  child: Text("Cancelar", style: TextStyle(
-                    color: Colors.red
-                  ),)
-              ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Cancelar",
+                    style: TextStyle(color: Colors.red),
+                  )),
               TextButton(
-                  onPressed: (){},
-                  child: Text("Salvar")
+                onPressed: () {
+                  _principalController.adicionarItem();
+                  Navigator.pop(context);
+                },
+                child: Text("Salvar"),
               )
             ],
           );
-        }
-    );
+        });
   }
 
   @override
@@ -47,20 +52,20 @@ class _PrincipalState extends State<Principal> {
           style: TextStyle(fontSize: 25, color: Colors.white),
         ),
       ),
-      body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (_, indice){
-          return ListTile(
-            title: Text("Título $indice"),
-            onTap: (){
-
-            },
-          );
-        },
-      ),
+      body: Observer(builder: (_) {
+        return ListView.builder(
+          itemCount: _principalController.listaItens.length,
+          itemBuilder: (_, indice) {
+            return ListTile(
+              title: Text(_principalController.listaItens[indice]),
+              onTap: () {},
+            );
+          },
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: (){
+        onPressed: () {
           _dialog();
         },
       ),
