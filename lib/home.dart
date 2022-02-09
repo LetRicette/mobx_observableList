@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:mobx_observablelist/controller.dart';
 import 'package:mobx_observablelist/principal.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Controller controller = Controller();
+  Controller? controller;
   ReactionDisposer? reactionDisposer;
 
   @override
@@ -23,8 +24,10 @@ class _HomeState extends State<Home> {
     //   print(controller.formularioValidado);
     // });
 
+    controller = Provider.of<Controller>(context);
+
     reactionDisposer =
-        reaction((_) => controller.usuarioLogado, (bool usuarioLogado) {
+        reaction((_) => controller!.usuarioLogado, (bool usuarioLogado) {
       //enviaria o usuário para outra tela por aqui
       if (usuarioLogado) {
         Navigator.of(context)
@@ -51,14 +54,14 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.all(16),
               child: TextField(
                 decoration: InputDecoration(labelText: "Email"),
-                onChanged: controller.setEmail,
+                onChanged: controller!.setEmail,
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
               child: TextField(
                 decoration: InputDecoration(labelText: "Senha"),
-                onChanged: controller.setPassword,
+                onChanged: controller!.setPassword,
               ),
             ),
             Padding(
@@ -66,7 +69,7 @@ class _HomeState extends State<Home> {
               child: Observer(
                 builder: (_) {
                   return Text(
-                    controller.formularioValidado
+                    controller!.formularioValidado
                         ? "Validado"
                         : "*  Campos não validados",
                   );
@@ -78,12 +81,12 @@ class _HomeState extends State<Home> {
                 child: Observer(
                   builder: (_) {
                     return ElevatedButton(
-                      onPressed: controller.formularioValidado
+                      onPressed: controller!.formularioValidado
                           ? () {
-                              controller.logar();
+                              controller!.logar();
                             }
                           : null,
-                      child: controller.carregando
+                      child: controller!.carregando
                           ? CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation(
                                 Colors.white,
